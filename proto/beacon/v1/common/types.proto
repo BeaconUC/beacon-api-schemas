@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package beaconapi.v1.common;
+
+option go_package = "github.com/BeaconUC/beacon-api-schemas/gen/beaconapi/v1/common;common";
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+enum OutageStatus {
+    OUTAGE_STATUS_UNSPECIFIED = 0;
+    UNVERIFIED = 1;
+    VERIFIED = 2;
+    BEING_RESOLVED = 3;
+    RESOLVED = 4;
+}
+
+enum ReportStatus {
+    REPORT_STATUS_UNSPECIFIED = 0;
+    UNPROCESSED = 1;
+    PROCESSED_AS_NEW_OUTAGE = 2;
+    PROCESSED_AS_DUPLICATE = 3;
+    ARCHIVED_AS_ISOLATED = 4;
+}
+
+enum AssignmentStatus {
+    ASSIGNMENT_STATUS_UNSPECIFIED = 0;
+    ASSIGNED = 1;
+    EN_ROUTE = 2;
+    ON_SITE = 3;
+    PAUSED = 4;
+    COMPLETED = 5;
+    CANCELLED = 6;
+}
+
+message GeoPoint {
+    double latitude = 1 [
+        (buf.validate.field).double.gte = -90,
+        (buf.validate.field).double.lte = 90
+    ];
+    double longitude = 2 [
+        (buf.validate.field).double.gte = -180,
+        (buf.validate.field).double.lte = 180
+    ];
+}
+
+message Uuid {
+    string value = 1 [(buf.validate.field).string.uuid = true];
+}

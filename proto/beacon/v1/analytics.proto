@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package beaconapi.v1.analyticsapi;
+
+option go_package = "github.com/BeaconUC/beacon-api-schemas/gen/beaconapi/v1/analyticsapi;analyticsapi";
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+import "beacon/v1/common/types.proto";
+
+message OutageStatsRequest {
+    google.protobuf.Timestamp start_time = 1;
+    google.protobuf.Timestamp end_time = 2;
+}
+
+message OutageStatsResponse {
+    uint32 total_outages = 1;
+    uint32 resolved_outages = 2;
+    double average_resolution_time_hours = 3;
+}
+
+message PredictiveOutageRequest {
+    beaconapi.v1.common.GeoPoint region_center = 1;
+    double radius_km = 2 [(buf.validate.field).double.gt = 0];
+}
+
+message PredictiveOutageResponse {
+    string summary = 1;
+    double confidence_score = 2 [(buf.validate.field).double.lte = 1.0];
+    repeated beaconapi.v1.common.Uuid predicted_outage_ids = 3;
+}
+
+service AnalyticsService {
+    rpc GetOutageStatistics(OutageStatsRequest)
+        returns (OutageStatsResponse);
+
+    rpc PredictOutages(PredictiveOutageRequest)
+        returns (PredictiveOutageResponse);
+}

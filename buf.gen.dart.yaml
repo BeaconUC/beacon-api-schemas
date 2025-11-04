@@ -1,0 +1,10 @@
+version: v2
+managed:
+  enabled: true
+plugins:
+  # - local: protoc-gen-dart
+  #   out: gen/dart
+  #   opt:
+  #     - grpc
+  - remote: buf.build/connectrpc/dart
+    out: gen/dart

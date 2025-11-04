@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package beaconapi.v1.crewapi;
+
+option go_package = "github.com/BeaconUC/beacon-api-schemas/gen/beaconapi/v1/crewapi;crewapi";
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+import "beacon/v1/common/types.proto";
+
+message UpdateAssignmentStatusRequest {
+    beaconapi.v1.common.Uuid assignment_id = 1;
+    string status = 2 [
+        (buf.validate.field).string.in = "en_route,on_site,paused,completed,cancelled"
+    ];
+    string notes = 3 [(buf.validate.field).string.max_len = 1000];
+}
+
+message UpdateAssignmentStatusResponse {
+    string message = 1;
+    google.protobuf.Timestamp updated_at = 2;
+}
+
+message UploadFieldPhotoRequest {
+    beaconapi.v1.common.Uuid assignment_id = 1;
+    bytes photo_data = 2 [
+        (buf.validate.field).bytes.max_len = 5242880 // 5 MB
+    ];
+}
+
+message UploadFieldPhotoResponse {
+    string message = 1;
+    google.protobuf.Timestamp uploaded_at = 2;
+}
+
+service CrewService {
+    rpc UpdateAssignmentStatus(UpdateAssignmentStatusRequest)
+        returns (UpdateAssignmentStatusResponse);
+
+    rpc UploadFieldPhoto(UploadFieldPhotoRequest)
+        returns (UploadFieldPhotoResponse);
+}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package beaconapi.v1.publicapi;
+
+option go_package = "github.com/BeaconUC/beacon-api-schemas/gen/beaconapi/v1/publicapi;publicapi";
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+import "beacon/v1/common/types.proto";
+
+message CreateOutageReportRequest {
+    string description = 1 [
+        (buf.validate.field).string.min_len = 10,
+        (buf.validate.field).string.max_len = 500
+    ];
+    beaconapi.v1.common.GeoPoint location = 2;
+}
+
+message CreateOutageReportResponse {
+    beaconapi.v1.common.Uuid public_id = 1;
+    google.protobuf.Timestamp reported_at = 2;
+    string message = 3;
+}
+
+message VerifyOutageRequest {
+    beaconapi.v1.common.Uuid outage_id = 1;
+    string verification_notes = 2;
+}
+
+message VerifyOutageResponse {
+    string message = 1;
+    google.protobuf.Timestamp verified_at = 2;
+}
+
+service PublicBeaconService {
+    rpc CreateOutageReport(CreateOutageReportRequest)
+        returns (CreateOutageReportResponse);
+
+    rpc VerifyOutage(VerifyOutageRequest)
+        returns (VerifyOutageResponse);
+}
